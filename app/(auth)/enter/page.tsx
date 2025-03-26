@@ -1,9 +1,9 @@
 "use client";
 
-import { signIn } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 
 export default function Enter() {
@@ -14,11 +14,20 @@ export default function Enter() {
 
   async function handleSignIn(formData: FormData) {
     setMessage(null);
-    const result = await signIn(formData);
 
-    if (result?.error) {
-      setMessage({ type: "error", text: result.error });
-    } else if (result?.success) {
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email: formData.get("email") as string,
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/v1/verify`,
+      },
+    });
+
+    if (error) {
+      setMessage({ type: "error", text: error.message });
+    } else {
       setMessage({
         type: "success",
         text: "Check your email for the magic link!",
