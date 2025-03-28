@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { ChevronDown, Maximize2, Paperclip, Send } from "lucide-react";
+import { Paperclip, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
