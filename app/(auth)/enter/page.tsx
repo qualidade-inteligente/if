@@ -19,11 +19,19 @@ export default function Enter() {
 
     const supabase = createClient();
 
+    // VERCEL_URL is set to the domain of the Vercel deployment.
+    // "The value does not include the protocol scheme https://."
+    //   – https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_URL
+
+    const url = process.env.VERCEL_URL
+      ? `s://${process.env.VERCEL_URL}`
+      : "://localhost:3000";
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/v1/verify`,
+        emailRedirectTo: `http${url}/auth/v1/verify`,
       },
     });
 
