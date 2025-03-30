@@ -107,9 +107,9 @@ export function ProjectSidebar({
                             <SidebarMenuSubItem key={chat.id}>
                               <SidebarMenuSubButton
                                 asChild
-                                isActive={pathname === `/chat/${chat.id}`}
+                                isActive={pathname === `/c/${chat.id}`}
                               >
-                                <Link href={`/chat/${chat.id}`}>
+                                <Link href={`/c/${chat.id}`}>
                                   <span className="text-xs">{chat.name}</span>
                                 </Link>
                               </SidebarMenuSubButton>
