@@ -58,7 +58,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster position="bottom-center" />
+        <Toaster position="top-center" />
         {user && user.data.user ? (
           <SidebarProvider>
             <ProjectSidebar projectsPromise={getProjects()} />
