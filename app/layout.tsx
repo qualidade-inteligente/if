@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { ProjectSidebar } from "@/components/sidebar/project-sidebar";
+import { Project } from "@/lib/types";
+import { createClient } from "@/lib/supabase/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,18 +22,51 @@ export const metadata: Metadata = {
   description: "Intelligent Friend ai chat",
 };
 
-export default function RootLayout({
+async function getProjects(): Promise<Project[]> {
+  return [
+    {
+      id: "1",
+      name: "Project alpha",
+      chats: [
+        {
+          id: "1",
+          name: "Chat 1",
+        },
+        {
+          id: "2",
+          name: "Chat 2",
+        },
+      ],
+    },
+    {
+      id: "2",
+      name: "Project beta",
+      chats: [],
+    },
+  ];
+}
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster position="bottom-center" />
-        {children}
+        {user && user.data.user ? (
+          <SidebarProvider>
+            <ProjectSidebar projectsPromise={getProjects()} />
+            {children}
+          </SidebarProvider>
+        ) : (
+          <>{children}</>
+        )}
       </body>
     </html>
   );

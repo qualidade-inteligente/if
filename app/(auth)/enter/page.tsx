@@ -68,7 +68,7 @@ export default function Enter() {
         </form>
         <div className="mt-4">
           <Link
-            href="https://github.com/yourusername/your-repo"
+            href="https://github.com/superfluous-design/if"
             className="text-xs text-gray-500 hover:underline"
           >
             View project on GitHub
