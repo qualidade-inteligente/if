@@ -18,24 +18,19 @@ export function AllProjects({ projects }: { projects: Project[] }) {
           <Button>New Project</Button>
         </Link>
       </div>
-
-      {projects.length === 0 ? (
-        <p>No projects found. Create your first project!</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project: Project) => (
-            <div
-              key={project.id}
-              className="border p-4 rounded-lg shadow hover:shadow-md transition-shadow"
-            >
-              <h2 className="text-xl font-semibold">{project.title}</h2>
-              <p className="text-sm text-gray-500 mt-2">
-                Created: {new Date(project.created_at).toLocaleDateString()}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {projects.map((project: Project) => (
+          <div
+            key={project.id}
+            className="border p-4 rounded-lg shadow hover:shadow-md transition-shadow"
+          >
+            <h2 className="text-xl font-semibold">{project.title}</h2>
+            <p className="text-sm text-gray-500 mt-2">
+              Created: {new Date(project.created_at).toLocaleDateString()}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
