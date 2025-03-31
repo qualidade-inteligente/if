@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { ProjectSidebar } from "@/components/sidebar/project-sidebar";
-import { Project } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
+import Providers from "@/lib/providers";
+import { Project } from "@/lib/types";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,34 +23,21 @@ export const metadata: Metadata = {
 };
 
 async function getProjects(): Promise<Project[]> {
-  return [
-    {
-      id: "1",
-      name: "Project alpha",
-      chats: [
-        {
-          id: "1",
-          name: "Chat 1",
-        },
-        {
-          id: "2",
-          name: "Chat 2",
-        },
-      ],
-    },
-    {
-      id: "2",
-      name: "Project beta",
-      chats: [],
-    },
-  ];
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("project").select("*, chat(*)");
+  if (error) {
+    console.error("[ERROR PROJECT]:", error);
+  }
+  return data as Project[];
 }
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
+
   const user = await supabase.auth.getUser();
 
   return (
@@ -60,10 +47,10 @@ export default async function RootLayout({
       >
         <Toaster position="top-center" />
         {user && user.data.user ? (
-          <SidebarProvider>
-            <ProjectSidebar projectsPromise={getProjects()} />
+          <Providers serverProjects={await getProjects()}>
+            <ProjectSidebar />
             {children}
-          </SidebarProvider>
+          </Providers>
         ) : (
           <>{children}</>
         )}

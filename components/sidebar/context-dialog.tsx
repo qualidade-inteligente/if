@@ -1,3 +1,5 @@
+"use client";
+
 import { Project } from "@/lib/types";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import { Hash } from "lucide-react";
@@ -22,8 +24,8 @@ export function ContextDialog({ project }: { project: Project }) {
       </SidebarMenuItem>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Manage {project.name} context and files</DialogTitle>
-          <p>{project.name}</p>
+          <DialogTitle>Manage {project.title} context and files</DialogTitle>
+          <p>{project.title}</p>
         </DialogHeader>
       </DialogContent>
     </Dialog>
