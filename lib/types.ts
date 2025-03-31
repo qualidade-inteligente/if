@@ -2,7 +2,6 @@ export type Project = {
   id: string;
   title: string;
   created_at: string;
-  user_id: string;
   chat: Chat[];
 };
 

@@ -18,19 +18,17 @@ export const projectSlice = createSlice({
         id: project.id,
         title: project.title,
         created_at: project.created_at,
-        user_id: project.user_id,
         chat: project.chat,
       }));
     },
     createProject: (
       state,
-      action: PayloadAction<{ user_id: string; title: string }>
+      action: PayloadAction<{ id: string; title: string }>
     ) => {
       const newProject: Project = {
-        id: crypto.randomUUID(),
+        id: action.payload.id,
         title: action.payload.title,
         created_at: new Date().toISOString(),
-        user_id: action.payload.user_id,
         chat: [],
       };
 

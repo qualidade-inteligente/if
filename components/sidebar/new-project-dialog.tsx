@@ -26,14 +26,17 @@ import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import { PlusCircle } from "lucide-react";
 import { useAppDispatch } from "@/hooks/use-redux";
 import { createProject } from "@/lib/redux/project-slice";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 const projectSchema = z.object({
   title: z.string().min(1, "Title is required").max(255, "Title is too long"),
 });
 
 export function NewProjectDialog() {
+  const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
-
+  const supabase = createClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof projectSchema>>({
     resolver: zodResolver(projectSchema),
@@ -44,12 +47,20 @@ export function NewProjectDialog() {
 
   async function onSubmit(values: z.infer<typeof projectSchema>) {
     setIsSubmitting(true);
-    dispatch(createProject(values.title));
+    const id = crypto.randomUUID();
+    const { error } = await supabase
+      .from("project")
+      .insert({ id, title: values.title });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    dispatch(createProject({ id, title: values.title }));
     setIsSubmitting(false);
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <DialogTrigger>
@@ -70,6 +81,7 @@ export function NewProjectDialog() {
             onSubmit={(e) => {
               e.preventDefault();
               form.handleSubmit(onSubmit)(e);
+              setOpen(false);
             }}
             className="space-y-8"
           >

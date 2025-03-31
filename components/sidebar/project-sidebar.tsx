@@ -38,18 +38,11 @@ import { Chat } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/use-redux";
 import { insertChat } from "@/lib/redux/project-slice";
 
-export function ProjectSidebar(
-  {
-    // projectsPromise,
-    // }:{
-    // projectsPromise: Promise<Project[]>;
-  }
-) {
+export function ProjectSidebar() {
   const dispatch = useAppDispatch();
   const supabase = createClient();
 
   const projects = useAppSelector((state) => state.project);
-  // const serverProjects = React.use(projectsPromise);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -90,10 +83,6 @@ export function ProjectSidebar(
         return null;
       });
   }
-
-  // React.useEffect(() => {
-  //   dispatch(initializeProjects(serverProjects));
-  // }, [serverProjects, dispatch]);
 
   return (
     <Sidebar>
