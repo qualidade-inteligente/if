@@ -45,7 +45,7 @@ export default function Enter() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="w-[320px]">
-        <h1 className="text-base font-medium mb-2">AI Chat Login</h1>
+        <h1 className="text-base font-semibold mb-2">AI Chat Login</h1>
         <p className="text-sm text-gray-600 mb-4">
           Enter your email to start chatting with our AI assistant.
         </p>

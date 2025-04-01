@@ -20,7 +20,7 @@ export function ChatInput() {
   };
 
   return (
-    <div className="rounded-xl bg-stone-150 border-border border-1 p-2 max-w-xl absolute left-1/2 -translate-x-1/2 bottom-4 w-full shadow-md">
+    <div className="rounded-lg bg-sidebar bg-stone-150 border-border border-1 p-2 max-w-xl absolute left-1/2 -translate-x-1/2 bottom-2 w-full shadow-sm">
       <form onSubmit={handleSubmit} className="flex flex-col gap-0">
         <div
           className={cn(

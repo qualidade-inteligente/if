@@ -85,7 +85,7 @@ export function ProjectSidebar() {
   }
 
   return (
-    <Sidebar>
+    <Sidebar variant="floating">
       <SidebarHeader>
         <h2 className="px-2 py-1 text-xl font-semibold flex gap-2 items-center justify-start">
           <Speech size={24} />
