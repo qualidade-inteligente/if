@@ -4,18 +4,24 @@ import { notFound } from "next/navigation";
 import { Hash, Slash } from "lucide-react";
 import { NewChatButton } from "@/components/project/new-chat-button";
 import Link from "next/link";
+import { Chat, Project } from "@/lib/types";
+import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
-export default async function ProjectPage({
+type CustomChat = Chat & {
+  project: Project;
+};
+
+export default async function ChatPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data, error } = (await supabase
     .from("chat")
     .select("id, title, created_at, project ( id, title ), message (*)")
-    .eq("id", id);
+    .eq("id", id)) as PostgrestSingleResponse<CustomChat[]>;
 
   if (error) {
     console.error("Error fetching chat data:", error);
