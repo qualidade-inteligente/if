@@ -1,4 +1,3 @@
-import { ChatInput } from "@/components/chat/chat-input";
 import { EmptyChat } from "@/components/chat/empty-chat";
 
 export default async function HomePage() {

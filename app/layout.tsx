@@ -40,6 +40,10 @@ export default async function RootLayout({
 
   const user = await supabase.auth.getUser();
 
+  const projects = await getProjects();
+
+  console.log("Projects:", projects);
+
   return (
     <html lang="en">
       <body

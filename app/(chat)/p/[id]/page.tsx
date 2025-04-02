@@ -1,38 +1,38 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 
-import { Hash, Slash } from "lucide-react";
+import { Table } from "@/components/ui/table";
+import { Hash } from "lucide-react";
+import { ChatTable } from "@/components/project/chat-table";
 import { NewChatButton } from "@/components/project/new-chat-button";
-import Link from "next/link";
+import { DeleteProjectButton } from "@/components/project/delete-project-button";
+import { ProjectDialog } from "@/components/project/project-dialog";
 
 export default async function ProjectPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = await params;
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("chat")
-    .select("id, title, created_at, project ( id, title ), message (*)")
-    .eq("id", id);
+    .from("project")
+    .select("id, title")
+    .eq("id", params.id);
 
   if (error) {
-    console.error("Error fetching chat data:", error);
+    console.error("Error fetching project data:", error);
     return notFound();
   }
   if (!data) {
-    console.error("Chat not found");
+    console.error("Project not found");
     return notFound();
   }
 
-  const chat = data[0];
-  if (!chat) {
-    console.error("Chat not found");
+  const project = data[0];
+  if (!project) {
+    console.error("Project not found");
     return notFound();
   }
-
-  console.log("Chat:", chat);
 
   return (
     <>
@@ -42,27 +42,21 @@ export default async function ProjectPage({
             <div className="pl-4">
               <div className="flex gap-2 items-center font-semibold">
                 <Hash size={20} />
-                <Link href={`/p/${chat.project.id}`}>{chat.project.title}</Link>
-                <Slash
-                  size={14}
-                  strokeWidth={2.3}
-                  className="-rotate-[18deg]"
-                />
-                <span>{chat.title}</span>
+                {project.title}
               </div>
             </div>
             <div className="pr-4 flex gap-2 items-center justify-end">
-              <NewChatButton projectId={chat.project.id} />
-              {/* <ProjectDialog projectId={project.id} /> */}
-              {/* <DeleteProjectButton projectId={project.id} /> */}
+              <NewChatButton projectId={project.id} />
+              <ProjectDialog projectId={project.id} />
+              <DeleteProjectButton projectId={project.id} />
             </div>
           </div>
         </div>
-        {/* <div className="flex-1 h-[calc(100vh-60px)] overflow-y-auto pb-20">
+        <div className="flex-1 h-[calc(100vh-60px)] overflow-y-auto pb-20">
           <Table className="">
             <ChatTable projectId={project.id} />
           </Table>
-        </div> */}
+        </div>
       </main>
     </>
   );

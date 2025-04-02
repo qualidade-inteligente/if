@@ -21,15 +21,20 @@ export const projectSlice = createSlice({
         chat: project.chat,
       }));
     },
-    createProject: (
+    insertProject: (
       state,
-      action: PayloadAction<{ id: string; title: string }>
+      action: PayloadAction<{
+        id: string;
+        title: string;
+        created_at: string | undefined;
+        chat: Chat[] | undefined;
+      }>
     ) => {
       const newProject: Project = {
         id: action.payload.id,
         title: action.payload.title,
-        created_at: new Date().toISOString(),
-        chat: [],
+        created_at: action.payload.created_at || new Date().toISOString(),
+        chat: action.payload.chat || [],
       };
 
       state.projects.push(newProject);
@@ -42,9 +47,24 @@ export const projectSlice = createSlice({
         state.projects[index].chat.push(action.payload.chat);
       }
     },
-
+    removeChat: (
+      state,
+      action: PayloadAction<{ pid: string; cid: string }>
+    ) => {
+      const index = state.projects.findIndex(
+        (project) => project.id === action.payload.pid
+      );
+      if (index !== -1) {
+        const chatIndex = state.projects[index].chat.findIndex(
+          (chat) => chat.id === action.payload.cid
+        );
+        if (chatIndex !== -1) {
+          state.projects[index].chat.splice(chatIndex, 1);
+        }
+      }
+    },
     // Decrement action without a payload
-    deleteProject: (state, action: PayloadAction<string>) => {
+    removeProject: (state, action: PayloadAction<string>) => {
       state.projects = state.projects.filter(
         (project) => project.id !== action.payload
       );
@@ -52,6 +72,11 @@ export const projectSlice = createSlice({
   },
 });
 
-export const { initializeProjects, createProject, deleteProject, insertChat } =
-  projectSlice.actions;
+export const {
+  initializeProjects,
+  insertProject,
+  removeProject,
+  insertChat,
+  removeChat,
+} = projectSlice.actions;
 export default projectSlice.reducer;

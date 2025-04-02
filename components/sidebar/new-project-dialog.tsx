@@ -25,7 +25,7 @@ import {
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import { PlusCircle } from "lucide-react";
 import { useAppDispatch } from "@/hooks/use-redux";
-import { createProject } from "@/lib/redux/project-slice";
+import { insertProject } from "@/lib/redux/project-slice";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
@@ -55,7 +55,14 @@ export function NewProjectDialog() {
       toast.error(error.message);
       return;
     }
-    dispatch(createProject({ id, title: values.title }));
+    dispatch(
+      insertProject({
+        id,
+        title: values.title,
+        created_at: new Date().toISOString(),
+        chat: [],
+      })
+    );
     setIsSubmitting(false);
   }
 
