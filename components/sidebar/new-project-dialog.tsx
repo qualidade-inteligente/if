@@ -22,8 +22,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
-import { PlusCircle } from "lucide-react";
 import { useAppDispatch } from "@/hooks/use-redux";
 import { insertProject } from "@/lib/redux/project-slice";
 import { createClient } from "@/lib/supabase/client";
@@ -33,11 +31,12 @@ const projectSchema = z.object({
   title: z.string().min(1, "Title is required").max(255, "Title is too long"),
 });
 
-export function NewProjectDialog() {
+export function NewProjectDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const supabase = createClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof projectSchema>>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
@@ -53,29 +52,26 @@ export function NewProjectDialog() {
       .insert({ id, title: values.title });
     if (error) {
       toast.error(error.message);
-      return;
+    } else {
+      toast.success("Project created successfully");
+      setOpen(false);
+      dispatch(
+        insertProject({
+          id,
+          title: values.title,
+          created_at: new Date().toISOString(),
+          chat: [],
+          context: [],
+        })
+      );
     }
-    dispatch(
-      insertProject({
-        id,
-        title: values.title,
-        created_at: new Date().toISOString(),
-        chat: [],
-      })
-    );
+
     setIsSubmitting(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <SidebarMenuItem>
-        <SidebarMenuButton asChild>
-          <DialogTrigger>
-            <PlusCircle size={16} />
-            <span className="text-xs">New Project</span>
-          </DialogTrigger>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new Project</DialogTitle>
@@ -88,9 +84,8 @@ export function NewProjectDialog() {
             onSubmit={(e) => {
               e.preventDefault();
               form.handleSubmit(onSubmit)(e);
-              setOpen(false);
             }}
-            className="space-y-8"
+            className="space-y-4"
           >
             <FormField
               control={form.control}

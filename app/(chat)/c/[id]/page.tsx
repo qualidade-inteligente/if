@@ -38,15 +38,13 @@ export default async function ChatPage({
     return notFound();
   }
 
-  console.log("Chat:", chat);
-
   return (
     <>
       <main className="flex-1 max-h-screen flex flex-col overflow-hidden relative">
         <div className="h-15">
           <div className="flex items-center justify-between p-4">
             <div className="pl-4">
-              <div className="flex gap-2 items-center font-semibold">
+              <div className="flex gap-2 items-center font-semibold text-sm">
                 <Hash size={20} />
                 <Link href={`/p/${chat.project.id}`}>{chat.project.title}</Link>
                 <Slash
@@ -54,21 +52,14 @@ export default async function ChatPage({
                   strokeWidth={2.3}
                   className="-rotate-[18deg]"
                 />
-                <span>{chat.title}</span>
+                <span className="text-muted-foreground">{chat.title}</span>
               </div>
             </div>
             <div className="pr-4 flex gap-2 items-center justify-end">
               <NewChatButton projectId={chat.project.id} />
-              {/* <ProjectDialog projectId={project.id} /> */}
-              {/* <DeleteProjectButton projectId={project.id} /> */}
             </div>
           </div>
         </div>
-        {/* <div className="flex-1 h-[calc(100vh-60px)] overflow-y-auto pb-20">
-          <Table className="">
-            <ChatTable projectId={project.id} />
-          </Table>
-        </div> */}
       </main>
     </>
   );

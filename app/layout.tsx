@@ -24,7 +24,9 @@ export const metadata: Metadata = {
 
 async function getProjects(): Promise<Project[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("project").select("*, chat(*)");
+  const { data, error } = await supabase
+    .from("project")
+    .select("*, chat(*), context(*)");
   if (error) {
     console.error("[ERROR PROJECT]:", error);
   }

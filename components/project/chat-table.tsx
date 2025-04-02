@@ -1,10 +1,15 @@
 "use client";
 
 import { DeleteChatButton } from "./delete-chat-button";
-import { useAppSelector } from "@/hooks/use-redux";
+import { useAppDispatch, useAppSelector } from "@/hooks/use-redux";
 import { useRouter } from "next/navigation";
+import { NewChatButton } from "./new-chat-button";
+import { insertChat } from "@/lib/redux/project-slice";
+import { createClient } from "@/lib/supabase/client";
 
 export function ChatTable({ projectId }: { projectId: string }) {
+  const dispatch = useAppDispatch();
+  const supabase = createClient();
   const router = useRouter();
 
   const project = useAppSelector((state) =>
@@ -14,30 +19,75 @@ export function ChatTable({ projectId }: { projectId: string }) {
   if (!project) {
     return null; // or handle the case when the project is not found
   }
+
+  async function createChat(project_id: string) {
+    const uuid = crypto.randomUUID();
+    // create chat locally and in supabase
+    const newChat = {
+      id: uuid,
+      title: "New chat",
+      project_id,
+      created_at: new Date().toISOString(),
+    };
+
+    dispatch(insertChat({ id: project_id, chat: newChat }));
+    await supabase
+      .from("chat")
+      .insert([newChat])
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("[ERROR CHAT]:", error);
+          return error;
+        }
+        console.log("[CHAT]:", data);
+        return null;
+      });
+  }
+
   return (
-    <div className="w-full flex flex-col">
-      {project.chat.map((chat) => (
-        <div
-          key={chat.id}
-          className="h-10 group relative rounded-md hover:bg-muted cursor-pointer has-[+div:hover]:[&>div]:border-b-transparent px-8"
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(`/c/${chat.id}`);
-          }}
-        >
-          <div className="h-full w-full flex text-muted-foreground items-center gap-2 border-b border-border/50 group-hover:border-b-transparent">
-            <div className="p-0 text-xs font-medium w-full rounded-l-md">
-              {chat.title}
-            </div>
-            <div className="relative text-xs rounded-r-md  text-right">
-              <span className="group-hover:opacity-0">
-                {formatDate(chat.created_at)}
-              </span>
-              <DeleteChatButton chat={chat} />
+    <div className="flex-1 h-[calc(100vh-60px)] overflow-y-auto pb-20 pl-2 pr-4">
+      <div className="w-full flex flex-col px-4 pb-2">
+        <div className="border-b border-border w-full flex items-center justify-between gap-2 px-4">
+          <div className="py-2 text-xs font-medium w-full">Chats</div>
+          <NewChatButton projectId={project.id} />
+        </div>
+      </div>
+      <div className="w-full flex flex-col">
+        {project.chat && project.chat.length === 0 ? (
+          <div
+            onClick={() => createChat(project.id)}
+            className="h-10 group relative rounded-md hover:bg-muted cursor-pointer px-8"
+          >
+            <div className="h-full w-full flex text-foreground items-center text-xs">
+              Start a new chat
             </div>
           </div>
-        </div>
-      ))}
+        ) : null}
+        {project.chat
+          ? project.chat.map((chat) => (
+              <div
+                key={chat.id}
+                className="h-10 group relative rounded-md hover:bg-muted cursor-pointer has-[+div:hover]:[&>div]:border-b-transparent px-8"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/c/${chat.id}`);
+                }}
+              >
+                <div className="h-full w-full flex text-muted-foreground items-center gap-2 border-b border-border/50 group-hover:border-b-transparent">
+                  <div className="p-0 text-xs font-medium w-full">
+                    {chat.title}
+                  </div>
+                  <div className="relative text-xs text-right">
+                    <span className="group-hover:opacity-0">
+                      {formatDate(chat.created_at)}
+                    </span>
+                    <DeleteChatButton chat={chat} />
+                  </div>
+                </div>
+              </div>
+            ))
+          : null}
+      </div>
     </div>
   );
 }

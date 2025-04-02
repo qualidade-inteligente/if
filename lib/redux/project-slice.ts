@@ -1,4 +1,4 @@
-import { Chat, Project } from "@/lib/types";
+import { Chat, Context, Project } from "@/lib/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ProjectState {
@@ -19,6 +19,7 @@ export const projectSlice = createSlice({
         title: project.title,
         created_at: project.created_at,
         chat: project.chat,
+        context: project.context,
       }));
     },
     insertProject: (
@@ -28,6 +29,7 @@ export const projectSlice = createSlice({
         title: string;
         created_at: string | undefined;
         chat: Chat[] | undefined;
+        context: Context[] | undefined;
       }>
     ) => {
       const newProject: Project = {
@@ -35,9 +37,15 @@ export const projectSlice = createSlice({
         title: action.payload.title,
         created_at: action.payload.created_at || new Date().toISOString(),
         chat: action.payload.chat || [],
+        context: action.payload.context || [],
       };
 
       state.projects.push(newProject);
+    },
+    removeProject: (state, action: PayloadAction<string>) => {
+      state.projects = state.projects.filter(
+        (project) => project.id !== action.payload
+      );
     },
     insertChat: (state, action: PayloadAction<{ id: string; chat: Chat }>) => {
       const index = state.projects.findIndex(
@@ -63,11 +71,32 @@ export const projectSlice = createSlice({
         }
       }
     },
-    // Decrement action without a payload
-    removeProject: (state, action: PayloadAction<string>) => {
-      state.projects = state.projects.filter(
-        (project) => project.id !== action.payload
+    insertContext: (
+      state,
+      action: PayloadAction<{ pid: string; context: Context }>
+    ) => {
+      const index = state.projects.findIndex(
+        (project) => project.id === action.payload.pid
       );
+      if (index !== -1) {
+        state.projects[index].context.push(action.payload.context);
+      }
+    },
+    removeContext: (
+      state,
+      action: PayloadAction<{ pid: string; cid: string }>
+    ) => {
+      const index = state.projects.findIndex(
+        (project) => project.id === action.payload.pid
+      );
+      if (index !== -1) {
+        const contextIndex = state.projects[index].context.findIndex(
+          (context) => context.id === action.payload.cid
+        );
+        if (contextIndex !== -1) {
+          state.projects[index].context.splice(contextIndex, 1);
+        }
+      }
     },
   },
 });
@@ -78,5 +107,7 @@ export const {
   removeProject,
   insertChat,
   removeChat,
+  insertContext,
+  removeContext,
 } = projectSlice.actions;
 export default projectSlice.reducer;

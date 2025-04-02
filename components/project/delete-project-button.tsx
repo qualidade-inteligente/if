@@ -46,8 +46,9 @@ export function DeleteProjectButton({ projectId }: { projectId: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="outline" size="sm">
           <Trash2 size={16} />
+          Delete project
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
