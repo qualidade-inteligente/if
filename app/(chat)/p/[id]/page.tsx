@@ -11,13 +11,14 @@ import { ProjectDialog } from "@/components/project/project-dialog";
 export default async function ProjectPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("project")
     .select("id, title")
-    .eq("id", params.id);
+    .eq("id", id);
 
   if (error) {
     console.error("Error fetching project data:", error);
