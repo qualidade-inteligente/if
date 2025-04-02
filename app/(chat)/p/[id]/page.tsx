@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 
-import { Table } from "@/components/ui/table";
 import { Hash } from "lucide-react";
 import { ChatTable } from "@/components/project/chat-table";
 import { NewChatButton } from "@/components/project/new-chat-button";
@@ -53,10 +52,15 @@ export default async function ProjectPage({
             </div>
           </div>
         </div>
-        <div className="flex-1 h-[calc(100vh-60px)] overflow-y-auto pb-20">
-          <Table className="">
-            <ChatTable projectId={project.id} />
-          </Table>
+        <div className="flex-1 h-[calc(100vh-60px)] overflow-y-auto pb-20 pl-2 pr-4">
+          <div className="w-full flex flex-col px-4 pb-2">
+            <div className="border-b border-border w-full flex items-center gap-2">
+              <div className="py-2 px-4 text-xs font-medium w-full">
+                Your Chats
+              </div>
+            </div>
+          </div>
+          <ChatTable projectId={project.id} />
         </div>
       </main>
     </>

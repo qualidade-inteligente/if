@@ -46,7 +46,7 @@ export function DeleteChatButton({ chat }: { chat: Chat }) {
       variant="outline"
       size="icon"
       type="submit"
-      className="bg-muted cursor-pointer absolute pointer-events-none top-1/2 -translate-y-1/2 right-12 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150"
+      className="bg-muted cursor-pointer absolute pointer-events-none top-1/2 -translate-y-1/2 right-0 opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto"
     >
       <Trash2 size={16} />
     </Button>

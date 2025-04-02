@@ -1,6 +1,5 @@
 "use client";
 
-import { TableBody, TableRow, TableCell } from "../ui/table";
 import { DeleteChatButton } from "./delete-chat-button";
 import { useAppSelector } from "@/hooks/use-redux";
 import { useRouter } from "next/navigation";
@@ -16,28 +15,30 @@ export function ChatTable({ projectId }: { projectId: string }) {
     return null; // or handle the case when the project is not found
   }
   return (
-    <TableBody>
+    <div className="w-full flex flex-col">
       {project.chat.map((chat) => (
-        <TableRow
+        <div
           key={chat.id}
-          className="group relative "
+          className="h-10 group relative rounded-md hover:bg-muted cursor-pointer has-[+div:hover]:[&>div]:border-b-transparent px-8"
           onClick={(e) => {
             e.stopPropagation();
             router.push(`/c/${chat.id}`);
           }}
         >
-          <TableCell className="p-0 pl-8 text-xs font-medium w-full rounded-l-md group-hover:bg-muted">
-            {chat.title}
-          </TableCell>
-          <TableCell className="relative text-xs rounded-r-md group-hover:bg-muted text-right pr-12">
-            <span className="group-hover:opacity-0 transition-opacity duration-150">
-              {formatDate(chat.created_at)}
-            </span>
-            <DeleteChatButton chat={chat} />
-          </TableCell>
-        </TableRow>
+          <div className="h-full w-full flex text-muted-foreground items-center gap-2 border-b border-border/50 group-hover:border-b-transparent">
+            <div className="p-0 text-xs font-medium w-full rounded-l-md">
+              {chat.title}
+            </div>
+            <div className="relative text-xs rounded-r-md  text-right">
+              <span className="group-hover:opacity-0">
+                {formatDate(chat.created_at)}
+              </span>
+              <DeleteChatButton chat={chat} />
+            </div>
+          </div>
+        </div>
       ))}
-    </TableBody>
+    </div>
   );
 }
 

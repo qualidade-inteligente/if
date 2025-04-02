@@ -7,6 +7,17 @@ import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "@/hooks/use-redux";
 import { insertProject, removeProject } from "@/lib/redux/project-slice";
 import { useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
 export function DeleteProjectButton({ projectId }: { projectId: string }) {
   const router = useRouter();
@@ -33,8 +44,25 @@ export function DeleteProjectButton({ projectId }: { projectId: string }) {
   }
 
   return (
-    <Button onClick={handleDelete} variant="ghost" size="icon">
-      <Trash2 size={16} />
-    </Button>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Trash2 size={16} />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete the
+            project and the chats within it.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

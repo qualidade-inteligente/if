@@ -27,7 +27,7 @@ export function ProjectSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar variant="floating">
+    <Sidebar>
       <SidebarHeader>
         <h2 className="px-2 py-1 text-xl font-semibold flex gap-2 items-center justify-start">
           <Speech size={24} />
