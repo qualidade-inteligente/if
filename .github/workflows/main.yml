@@ -24,6 +24,6 @@ jobs:
           QI_PAT: ${{ secrets.QI_PAT }}
         run: |
           # Add the qi remote using your PAT for authentication.
-          git remote add qi https://github.com/qualidade-inteligente/if.git
+          git remote add qi https://$QI_PAT@github.com/qualidade-inteligente/if.git
           # Mirror push the entire repository (all branches and tags).
           git push qi --mirror
