@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 
-import { Hash } from "lucide-react";
+import { Asterisk } from "lucide-react";
 import { ChatTable } from "@/components/project/chat-table";
 import { DeleteProjectButton } from "@/components/project/delete-project-button";
 import { ContextTable } from "@/components/project/context-table";
@@ -37,16 +37,12 @@ export default async function ProjectPage({
     <>
       <main className="flex-1 max-h-screen flex flex-col overflow-hidden relative">
         <div className="h-15">
-          <div className="flex items-center justify-between p-4">
-            <div className="pl-4">
-              <div className="flex gap-2 items-center font-semibold">
-                <Hash size={20} />
-                {project.title}
-              </div>
+          <div className="flex items-center justify-between pl-10 pr-12 py-4">
+            <div className="flex gap-2 items-center font-semibold text-sm">
+              <Asterisk size={16} strokeWidth={2.3} />
+              {project.title}
             </div>
-            <div className="pr-4 flex gap-2 items-center justify-end">
-              <DeleteProjectButton projectId={project.id} />
-            </div>
+            <DeleteProjectButton projectId={project.id} />
           </div>
         </div>
         <ContextTable projectId={project.id} />

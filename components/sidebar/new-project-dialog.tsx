@@ -6,7 +6,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,6 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -75,9 +73,6 @@ export function NewProjectDialog({ children }: { children: React.ReactNode }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new Project</DialogTitle>
-          <DialogDescription>
-            Enter the details for your new project.
-          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -92,15 +87,14 @@ export function NewProjectDialog({ children }: { children: React.ReactNode }) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Project Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter project title" {...field} />
+                    <Input placeholder="Name your project" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" size="sm" disabled={isSubmitting}>
               {isSubmitting ? "Creating..." : "Create Project"}
             </Button>
           </form>

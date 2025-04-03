@@ -67,7 +67,8 @@ export function ProjectSidebar() {
                       <SidebarMenuItem key={project.id}>
                         <SidebarMenuButton
                           className={cn(
-                            pathname.includes(project.id) && "bg-muted"
+                            pathname.includes(project.id) &&
+                              "bg-muted-foreground/10"
                           )}
                           onClick={() => router.push(`/p/${project.id}`)}
                         >

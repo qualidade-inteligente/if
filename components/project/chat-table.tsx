@@ -58,7 +58,7 @@ export function ChatTable({ projectId }: { projectId: string }) {
             onClick={() => createChat(project.id)}
             className="h-10 group relative rounded-md hover:bg-muted cursor-pointer px-8"
           >
-            <div className="h-full w-full flex text-foreground items-center text-xs">
+            <div className="h-full w-full flex text-foreground font-medium items-center text-xs">
               Start a new chat
             </div>
           </div>
@@ -67,14 +67,15 @@ export function ChatTable({ projectId }: { projectId: string }) {
           ? project.chat.map((chat) => (
               <div
                 key={chat.id}
-                className="h-10 group relative rounded-md hover:bg-muted cursor-pointer has-[+div:hover]:[&>div]:border-b-transparent px-8"
+                className="h-10 group rounded-md hover:bg-muted cursor-pointer has-[+div]:[&>div]:border-border/50 has-[+div:hover]:[&>div]:border-b-transparent px-8"
                 onClick={(e) => {
                   e.stopPropagation();
                   router.push(`/c/${chat.id}`);
                 }}
               >
-                <div className="h-full w-full flex text-muted-foreground items-center gap-2 border-b border-border/50 group-hover:border-b-transparent">
-                  <div className="p-0 text-xs font-medium w-full">
+                <div className="h-full relative w-full flex text-muted-foreground items-center gap-2 border-b border-transparent group-hover:border-b-transparent">
+                  {/* <div className="size-1.5 rounded-full bg-violet-700/80 absolute -left-4 top-1/2 -translate-y-1/2" /> */}
+                  <div className="p-0 w-full truncate flex gap-1 [&_svg]:size-4 text-xs text-foreground font-medium ">
                     {chat.title}
                   </div>
                   <div className="relative text-xs text-right">

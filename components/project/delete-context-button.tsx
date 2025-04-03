@@ -13,36 +13,31 @@ export function DeleteContextButton({ context }: { context: Context }) {
 
   async function handleDelete(event: React.MouseEvent) {
     event.stopPropagation();
+    event.preventDefault();
     const supabase = createClient();
 
+    dispatch(removeContext({ pid: context.project_id, cid: context.id }));
     const { error } = await supabase
       .from("context")
       .delete()
       .eq("id", context.id);
-    dispatch(removeContext({ pid: context.project_id, cid: context.id }));
+
     if (error) {
+      // If there is an error, insert the context back into the store
       dispatch(insertContext({ pid: context.project_id, context }));
       toast.error("Error deleting context");
     } else {
-      toast("Context deleted successfully", {
-        action: {
-          label: "Undo",
-          onClick: async () => {
-            dispatch(insertContext({ pid: context.project_id, context }));
-            const { error: undoError } = await supabase
-              .from("context")
-              .insert({ ...context });
-            if (undoError) {
-              dispatch(
-                removeContext({ pid: context.project_id, cid: context.id })
-              );
-              toast.error("Error restoring context");
-            } else {
-              toast.success("Context restored successfully");
-            }
-          },
-        },
-      });
+      // Delete the file from storage if it is a file type
+      if (context.type === "file") {
+        const { error: deleteError } = await supabase.storage
+          .from("context")
+          .remove([context.content]);
+        if (deleteError) {
+          dispatch(insertContext({ pid: context.project_id, context }));
+          toast.error("Error deleting file");
+        }
+      }
+      toast.success("Context deleted successfully");
     }
   }
 

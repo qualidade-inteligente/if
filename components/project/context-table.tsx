@@ -2,16 +2,18 @@
 
 import { useAppSelector } from "@/hooks/use-redux";
 import { ContextDialog } from "./new-context-dialog";
-import { ImageIcon, FileText, Globe, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { DeleteContextButton } from "./delete-context-button";
+import { ContextItem } from "./context-item";
 
 export type ContextDialogType = {
   key: number;
@@ -28,12 +30,6 @@ export type ContextDialogType = {
   };
 };
 
-const typeIconMap: Record<ContextDialogType["type"], React.ReactNode> = {
-  file: <ImageIcon size={16} />,
-  url: <Globe size={16} />,
-  text: <FileText size={16} />,
-};
-
 const contextActions: ContextDialogType[] = [
   {
     key: 0,
@@ -41,11 +37,11 @@ const contextActions: ContextDialogType[] = [
     title: "Upload File",
     description: "Upload any file pdf images docx csv...",
     labels: {
-      title: "File Title",
+      title: "Description",
       description: "File",
     },
     values: {
-      title: "Enter a title for the file",
+      title: "Reason you uploaded this file",
       description: "Upload a file",
     },
   },
@@ -83,6 +79,7 @@ export function ContextTable({ projectId }: { projectId: string }) {
   const [contextDialog, setContextDialog] = useState<ContextDialogType | null>(
     null
   );
+
   const project = useAppSelector((state) =>
     state.project.projects.find((p) => p.id === projectId)
   );
@@ -114,6 +111,10 @@ export function ContextTable({ projectId }: { projectId: string }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuLabel className="text-xs font-medium">
+                  Add Context
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer text-xs"
                   onClick={() =>
@@ -177,24 +178,8 @@ export function ContextTable({ projectId }: { projectId: string }) {
               ))
             : null}
           {project.context
-            ? project.context.map((contextItem, i) => (
-                <div
-                  key={i}
-                  className="h-10 group rounded-md hover:bg-muted cursor-pointer has-[+div]:[&>div]:border-border/50 has-[+div:hover]:[&>div]:border-b-transparent px-8"
-                  onClick={() => setContextDialog(contextActions[0])}
-                >
-                  <div className="h-full relative w-full flex text-muted-foreground items-center gap-2 border-b border-transparent group-hover:border-b-transparent">
-                    {/* <div className="size-1.5 rounded-full bg-violet-700/80 absolute -left-4 top-1/2 -translate-y-1/2" /> */}
-                    <div className="p-0 w-52 truncate flex gap-1 [&_svg]:size-4 text-xs text-foreground font-medium ">
-                      {typeIconMap[contextItem.type]}
-                      {contextItem.title}
-                    </div>
-                    <div className="text-xs flex-1 truncate">
-                      <span>{contextItem.content}</span>
-                    </div>
-                    <DeleteContextButton context={contextItem} />
-                  </div>
-                </div>
+            ? project.context.map((contextItem) => (
+                <ContextItem key={contextItem.id} context={contextItem} />
               ))
             : null}
         </div>

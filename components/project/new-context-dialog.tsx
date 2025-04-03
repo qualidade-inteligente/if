@@ -52,6 +52,7 @@ export function ContextDialog({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpen, setOpen] = useState(defaultOpen || false);
+  const [file, setFile] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof contextSchema>>({
     resolver: zodResolver(contextSchema),
@@ -71,8 +72,21 @@ export function ContextDialog({
       project_id: data.project_id,
       title: data.title,
       content: data.content,
-      type: dialog.type,
+      type: data.type,
     };
+
+    if (file) {
+      newContext.content = renameWithExtension(newContext.content, file.name);
+      const { error: uploadError } = await supabase.storage
+        .from("context")
+        .upload(newContext.content, file);
+
+      if (uploadError) {
+        toast.error("Error uploading file");
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     const { error } = await supabase.from("context").insert({ ...newContext });
     dispatch(insertContext({ pid: data.project_id, context: newContext }));
@@ -81,6 +95,9 @@ export function ContextDialog({
       toast.error("Error creating context");
       dispatch(removeContext({ pid: data.project_id, cid: newContext.id }));
       console.error("[ERROR CONTEXT]:", error);
+    } else {
+      toast.success("Context created successfully");
+      setOpen(false);
     }
 
     setIsSubmitting(false);
@@ -99,7 +116,6 @@ export function ContextDialog({
             onSubmit={(e) => {
               e.preventDefault();
               form.handleSubmit(onSubmit)(e);
-              setOpen(false);
             }}
             className="space-y-4"
           >
@@ -116,37 +132,57 @@ export function ContextDialog({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{dialog.labels.description}</FormLabel>
-                  <FormControl>
-                    {dialog.type === "text" ? (
-                      <Textarea
-                        placeholder={dialog.values.description}
-                        {...field}
-                      />
-                    ) : dialog.type === "file" ? (
+            {dialog.type === "file" ? (
+              <FormField
+                name="file"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>{dialog.labels.description}</FormLabel>
+                    <FormControl>
                       <Input
+                        onChange={(e) => {
+                          const selectedFile = e.target.files?.[0];
+
+                          if (selectedFile) {
+                            setFile(selectedFile);
+                            form.setValue("content", crypto.randomUUID());
+                          }
+                        }}
                         type="file"
                         placeholder={dialog.values.description}
-                        {...field}
                       />
-                    ) : (
-                      <Input
-                        type="url"
-                        placeholder={dialog.values.description}
-                        {...field}
-                      />
-                    )}
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" disabled={isSubmitting}>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{dialog.labels.description}</FormLabel>
+                    <FormControl>
+                      {dialog.type === "text" ? (
+                        <Textarea
+                          placeholder={dialog.values.description}
+                          {...field}
+                        />
+                      ) : (
+                        <Input
+                          type="url"
+                          placeholder={dialog.values.description}
+                          {...field}
+                        />
+                      )}
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            <Button type="submit" disabled={isSubmitting} size="sm">
               {isSubmitting ? "Creating..." : "Create Context"}
             </Button>
           </form>
@@ -154,4 +190,21 @@ export function ContextDialog({
       </DialogContent>
     </Dialog>
   );
+}
+
+function renameWithExtension(
+  newName: string,
+  originalFileName: string
+): string {
+  // Find the last occurrence of a dot in the original file name
+  const dotIndex = originalFileName.lastIndexOf(".");
+
+  // If a dot is found (and not at the start to handle cases like ".gitignore")
+  if (dotIndex > 0) {
+    const extension = originalFileName.substring(dotIndex);
+    return newName + extension;
+  }
+
+  // If no extension is found, return the new name as is
+  return newName;
 }
