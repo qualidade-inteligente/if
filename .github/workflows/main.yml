@@ -1,0 +1,29 @@
+name: Mirror Repository to qi/if
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository with full history
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensure full history is fetched for a proper mirror push
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Mirror repository to qi/if
+        env:
+          QI_PAT: ${{ secrets.QI_PAT }}
+        run: |
+          # Add the qi remote using your PAT for authentication.
+          git remote add qi https://github.com/qualidade-inteligente/if.git
+          # Mirror push the entire repository (all branches and tags).
+          git push qi --mirror
