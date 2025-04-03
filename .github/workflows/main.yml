@@ -16,8 +16,8 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
+          git config --global user.email "caadomaitis@gmail.com"
+          git config --global user.name "Sitiamoda"
 
       - name: Mirror repository to qi/if
         env:
@@ -25,9 +25,6 @@ jobs:
         run: |
           # Build the full remote URL
           FULL_URL="https://${QI_PAT}@github.com/qualidade-inteligente/if.git"
-          # Create a masked version to display (without the PAT)
-          echo "Using remote URL: $FULL_URL"
-
           # Add the remote and push
           git remote add qi "$FULL_URL"
           git push qi --mirror
